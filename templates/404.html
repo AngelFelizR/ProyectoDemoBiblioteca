@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Página no encontrada - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <div class="py-5">
+            <i class="bi bi-exclamation-triangle-fill text-warning" style="font-size: 6rem;"></i>
+            <h1 class="display-1 fw-bold mt-4">404</h1>
+            <h2 class="mb-4">Página no encontrada</h2>
+            <p class="lead text-muted mb-4">
+                Lo sentimos, la página que está buscando no existe o ha sido movida.
+            </p>
+            <div class="d-grid gap-2 d-md-block">
+                <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-house"></i> Ir al Inicio
+                </a>
+                <a href="javascript:history.back()" class="btn btn-secondary btn-lg">
+                    <i class="bi bi-arrow-left"></i> Volver Atrás
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-compass"></i> Enlaces Útiles</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <a href="{{ url_for('libros_lista') }}">
+                                    <i class="bi bi-book"></i> Catálogo de Libros
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="{{ url_for('usuarios_lista') }}">
+                                    <i class="bi bi-people"></i> Lista de Usuarios
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <a href="{{ url_for('prestamos_lista') }}">
+                                    <i class="bi bi-journal-check"></i> Préstamos Activos
+                                </a>
+                            </li>
+                            <li class="mb-2">
+                                <a href="{{ url_for('prestamos_vencidos') }}">
+                                    <i class="bi bi-exclamation-triangle"></i> Préstamos Vencidos
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

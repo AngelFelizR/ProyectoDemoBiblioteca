@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}{{ usuario.nombre_completo }} - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-12">
+        <a href="{{ url_for('usuarios_lista') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver a la lista
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5><i class="bi bi-person"></i> Información del Usuario</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th style="width: 30%">ID:</th>
+                        <td>{{ usuario.UsuarioID }}</td>
+                    </tr>
+                    <tr>
+                        <th>Número de Carnet:</th>
+                        <td><strong>{{ usuario.NumeroCarnet }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Nombre Completo:</th>
+                        <td>{{ usuario.nombre_completo }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email:</th>
+                        <td><a href="mailto:{{ usuario.Email }}">{{ usuario.Email }}</a></td>
+                    </tr>
+                    <tr>
+                        <th>Teléfono:</th>
+                        <td>{{ usuario.Telefono or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Dirección:</th>
+                        <td>{{ usuario.Direccion or 'N/A' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Estado:</th>
+                        <td>
+                            <span class="badge bg-{{ 'success' if usuario.Estado == 'Activo' else 'secondary' }}">
+                                {{ usuario.Estado }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Registro:</th>
+                        <td>{{ usuario.FechaRegistro|format_datetime }}</td>
+                    </tr>
+                </table>
+
+                <div class="mt-3">
+                    <a href="{{ url_for('usuario_editar', usuario_id=usuario.UsuarioID) }}"
+                       class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Editar Usuario
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5><i class="bi bi-journal-check"></i> Préstamos Activos</h5>
+            </div>
+            <div class="card-body">
+                {% if prestamos %}
+                    <p class="text-muted">{{ prestamos|length }} préstamo(s) activo(s)</p>
+                    <ul class="list-group">
+                        {% for prestamo in prestamos %}
+                        <li class="list-group-item">
+                            <strong>{{ prestamo.libro.Titulo }}</strong><br>
+                            <small class="text-muted">
+                                Vence: {{ prestamo.FechaDevolucionEsperada|format_date }}<br>
+                                {% if prestamo.dias_restantes < 0 %}
+                                    <span class="badge bg-danger">Vencido hace {{ prestamo.dias_restantes|abs }} días</span>
+                                {% elif prestamo.dias_restantes <= 3 %}
+                                    <span class="badge bg-warning">{{ prestamo.dias_restantes }} días restantes</span>
+                                {% else %}
+                                    <span class="badge bg-success">{{ prestamo.dias_restantes }} días restantes</span>
+                                {% endif %}
+                            </small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No tiene préstamos activos</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

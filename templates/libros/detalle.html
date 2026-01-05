@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}{{ libro.Titulo }} - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="bi bi-book"></i> Detalle del Libro</h2>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('libro_editar', libro_id=libro.LibroID) }}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+        <a href="{{ url_for('libros_lista') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Información del Libro</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tbody>
+                        <tr>
+                            <th width="200">ID:</th>
+                            <td>{{ libro.LibroID }}</td>
+                        </tr>
+                        <tr>
+                            <th>Título:</th>
+                            <td><strong>{{ libro.Titulo }}</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Autor:</th>
+                            <td>{{ libro.autor.nombre_completo }}</td>
+                        </tr>
+                        <tr>
+                            <th>Categoría:</th>
+                            <td>
+                                <span class="badge bg-info">{{ libro.categoria.NombreCategoria }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>ISBN:</th>
+                            <td><code>{{ libro.ISBN }}</code></td>
+                        </tr>
+                        <tr>
+                            <th>Editorial:</th>
+                            <td>{{ libro.Editorial or 'No especificada' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Año Publicación:</th>
+                            <td>{{ libro.AnoPublicacion or 'No especificado' }}</td>
+                        </tr>
+                        <tr>
+                            <th>Copias Totales:</th>
+                            <td>{{ libro.CopiasTotal }}</td>
+                        </tr>
+                        <tr>
+                            <th>Copias Disponibles:</th>
+                            <td>
+                                <span class="badge bg-{{ 'success' if libro.CopiasDisponibles > 0 else 'danger' }} fs-6">
+                                    {{ libro.CopiasDisponibles }}
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Estado:</th>
+                            <td>
+                                {% if libro.esta_disponible %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle"></i> Disponible
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger">
+                                        <i class="bi bi-x-circle"></i> No Disponible
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="bi bi-journal-check"></i> Historial de Préstamos</h5>
+            </div>
+            <div class="card-body">
+                {% if prestamos %}
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Fecha Préstamo</th>
+                                <th>Fecha Devolución Esperada</th>
+                                <th>Fecha Devolución Real</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for prestamo in prestamos %}
+                            <tr class="{{ 'table-danger' if prestamo.esta_vencido and prestamo.esta_activo else '' }}">
+                                <td>
+                                    <a href="{{ url_for('usuario_detalle', usuario_id=prestamo.UsuarioID) }}">
+                                        {{ prestamo.usuario.nombre_completo }}
+                                    </a>
+                                </td>
+                                <td>{{ prestamo.FechaPrestamo|format_date }}</td>
+                                <td>{{ prestamo.FechaDevolucionEsperada|format_date }}</td>
+                                <td>
+                                    {% if prestamo.FechaDevolucionReal %}
+                                        {{ prestamo.FechaDevolucionReal|format_date }}
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge bg-{{ 'info' if prestamo.Estado == 'Prestado' else 'secondary' }}">
+                                        {{ prestamo.Estado }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-muted small mb-0">Total de préstamos: {{ prestamos|length }}</p>
+                {% else %}
+                <div class="alert alert-info mb-0">
+                    Este libro no tiene préstamos registrados.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-gear"></i> Acciones</h5>
+                {% if libro.esta_disponible %}
+                <a href="{{ url_for('prestamo_nuevo') }}" class="btn btn-success w-100 mb-2">
+                    <i class="bi bi-journal-plus"></i> Crear Préstamo
+                </a>
+                {% else %}
+                <button class="btn btn-secondary w-100 mb-2" disabled>
+                    <i class="bi bi-x-circle"></i> No Disponible para Préstamo
+                </button>
+                {% endif %}
+                <a href="{{ url_for('libro_editar', libro_id=libro.LibroID) }}" class="btn btn-warning w-100 mb-2">
+                    <i class="bi bi-pencil"></i> Editar Información
+                </a>
+            </div>
+        </div>
+
+        <div class="card bg-light">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-graph-up"></i> Estadísticas</h6>
+                <ul class="list-unstyled small mb-0">
+                    <li><strong>Prestados actualmente:</strong> {{ libro.CopiasTotal - libro.CopiasDisponibles }}</li>
+                    <li><strong>Total préstamos:</strong> {{ prestamos|length if prestamos else 0 }}</li>
+                    <li><strong>Tasa de disponibilidad:</strong>
+                        {{ "%.0f"|format((libro.CopiasDisponibles / libro.CopiasTotal * 100) if libro.CopiasTotal > 0 else 0) }}%
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

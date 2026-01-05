@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if autor else 'Nuevo' }} Autor - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-12">
+        <a href="{{ url_for('autores_lista') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver a la lista
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5>
+                    <i class="bi bi-{{ 'pencil' if autor else 'person-plus' }}"></i>
+                    {{ 'Editar' if autor else 'Nuevo' }} Autor
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre *</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre"
+                                       value="{{ autor.Nombre if autor else '' }}"
+                                       placeholder="Ej: Gabriel"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="apellido" class="form-label">Apellido *</label>
+                                <input type="text" class="form-control" id="apellido" name="apellido"
+                                       value="{{ autor.Apellido if autor else '' }}"
+                                       placeholder="Ej: García Márquez"
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nacionalidad" class="form-label">Nacionalidad</label>
+                                <input type="text" class="form-control" id="nacionalidad" name="nacionalidad"
+                                       value="{{ autor.Nacionalidad if autor else '' }}"
+                                       placeholder="Ej: Colombiana">
+                                <div class="form-text">País de origen del autor.</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento"
+                                       value="{% if autor and autor.FechaNacimiento %}{{ autor.FechaNacimiento.strftime('%Y-%m-%d') }}{% endif %}">
+                                <div class="form-text">Fecha de nacimiento del autor.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="biografia" class="form-label">Biografía</label>
+                        <textarea class="form-control" id="biografia" name="biografia" rows="5"
+                                  placeholder="Breve biografía del autor (opcional, máximo 500 caracteres)">{{ autor.Biografia if autor else '' }}</textarea>
+                        <div class="form-text">Resumen breve sobre la vida y obra del autor.</div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <small>* Campos obligatorios</small>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-save"></i> {{ 'Actualizar' if autor else 'Crear' }} Autor
+                        </button>
+                        <a href="{{ url_for('autores_lista') }}" class="btn btn-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if autor %}
+        <div class="card mt-3">
+            <div class="card-header bg-warning">
+                <h6><i class="bi bi-info-circle"></i> Información Adicional</h6>
+            </div>
+            <div class="card-body">
+                <p><strong>ID:</strong> {{ autor.AutorID }}</p>
+                <p><strong>Libros publicados:</strong> {{ autor.libros|length if autor.libros else 0 }}</p>
+                <p><strong>Fecha de Registro:</strong> {{ autor.FechaRegistro|format_datetime if autor.FechaRegistro else 'N/A' }}</p>
+                {% if autor.libros and autor.libros|length > 0 %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Este autor tiene libros asociados. No podrá ser eliminado hasta que se reasignen o eliminen todos sus libros.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

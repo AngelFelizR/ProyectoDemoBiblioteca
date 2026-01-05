@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if categoria else 'Nueva' }} Categoría - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-12">
+        <a href="{{ url_for('categorias_lista') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver a la lista
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5>
+                    <i class="bi bi-{{ 'pencil' if categoria else 'plus-circle' }}"></i>
+                    {{ 'Editar' if categoria else 'Nueva' }} Categoría
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="nombre_categoria" class="form-label">Nombre de la Categoría *</label>
+                        <input type="text" class="form-control" id="nombre_categoria" name="nombre_categoria"
+                               value="{{ categoria.NombreCategoria if categoria else '' }}"
+                               placeholder="Ej: Ciencia Ficción, Historia, Programación"
+                               required>
+                        <div class="form-text">El nombre debe ser único en el sistema.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="4"
+                                  placeholder="Descripción breve de la categoría (opcional)">{{ categoria.Descripcion if categoria else '' }}</textarea>
+                        <div class="form-text">Máximo 300 caracteres.</div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <small>* Campos obligatorios</small>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-save"></i> {{ 'Actualizar' if categoria else 'Crear' }} Categoría
+                        </button>
+                        <a href="{{ url_for('categorias_lista') }}" class="btn btn-secondary">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% if categoria %}
+        <div class="card mt-3">
+            <div class="card-header bg-warning">
+                <h6><i class="bi bi-info-circle"></i> Información Adicional</h6>
+            </div>
+            <div class="card-body">
+                <p><strong>ID:</strong> {{ categoria.CategoriaID }}</p>
+                <p><strong>Libros asociados:</strong> {{ categoria.libros|length if categoria.libros else 0 }}</p>
+                {% if categoria.libros and categoria.libros|length > 0 %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Esta categoría tiene libros asociados. No podrá ser eliminada hasta que se reasignen o eliminen todos sus libros.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

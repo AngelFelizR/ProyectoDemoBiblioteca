@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">Sistema de Gestión de Biblioteca</h1>
+            <p class="lead">Bienvenido al sistema de gestión de biblioteca desarrollado con Python, SQL Server y Flask</p>
+            <hr class="my-4">
+            <p>Utiliza el menú de navegación para gestionar libros, usuarios y préstamos.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-book fs-1 text-primary"></i>
+                <h5 class="card-title mt-3">Libros</h5>
+                <p class="card-text display-6">{{ stats.total_libros or 0 }}</p>
+                <p class="text-muted">{{ stats.libros_disponibles or 0 }} disponibles</p>
+                <a href="{{ url_for('libros_lista') }}" class="btn btn-primary">Ver Libros</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-people fs-1 text-success"></i>
+                <h5 class="card-title mt-3">Usuarios</h5>
+                <p class="card-text display-6">{{ stats.total_usuarios or 0 }}</p>
+                <p class="text-muted">Usuarios activos</p>
+                <a href="{{ url_for('usuarios_lista') }}" class="btn btn-success">Ver Usuarios</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-journal-check fs-1 text-info"></i>
+                <h5 class="card-title mt-3">Préstamos</h5>
+                <p class="card-text display-6">{{ stats.prestamos_activos or 0 }}</p>
+                <p class="text-muted">Activos</p>
+                <a href="{{ url_for('prestamos_lista') }}" class="btn btn-info">Ver Préstamos</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="bi bi-exclamation-triangle fs-1 text-danger"></i>
+                <h5 class="card-title mt-3">Vencidos</h5>
+                <p class="card-text display-6">{{ stats.prestamos_vencidos or 0 }}</p>
+                <p class="text-muted">Préstamos</p>
+                <a href="{{ url_for('prestamos_vencidos') }}" class="btn btn-danger">Ver Vencidos</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5>Accesos Rápidos</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <a href="{{ url_for('libro_nuevo') }}" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="bi bi-plus-circle"></i> Nuevo Libro
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ url_for('usuario_nuevo') }}" class="btn btn-outline-success w-100 mb-2">
+                            <i class="bi bi-person-plus"></i> Nuevo Usuario
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ url_for('prestamo_nuevo') }}" class="btn btn-outline-info w-100 mb-2">
+                            <i class="bi bi-journal-plus"></i> Nuevo Préstamo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+# Requirements.txt - Práctica de Biblioteca
+# Sistema de Gestión de Biblioteca con Python y SQL Server
+
+# Drivers de base de datos
+pyodbc==5.3.0
+
+# ORM
+SQLAlchemy==2.0.23
+
+# Framework Web
+Flask==3.0.0
+Werkzeug==3.0.1
+
+# Utilidades
+python-dotenv==1.0.0
+
+# Para desarrollo (opcional)
+# pytest==7.4.3
+# pytest-cov==4.1.0
+# black==23.12.0
+# flake8==6.1.0
+
+# Para generación de reportes (bonus)
+# reportlab==4.0.7
+# pandas==2.1.4
+# openpyxl==3.1.2

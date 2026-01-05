@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}{{ categoria.NombreCategoria }} - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-12">
+        <a href="{{ url_for('categorias_lista') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver a la lista
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5><i class="bi bi-tags"></i> Información de la Categoría</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th style="width: 30%">ID:</th>
+                        <td>{{ categoria.CategoriaID }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nombre:</th>
+                        <td><strong>{{ categoria.NombreCategoria }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Descripción:</th>
+                        <td>{{ categoria.Descripcion or 'Sin descripción' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total de Libros:</th>
+                        <td>
+                            <span class="badge bg-primary">
+                                {{ categoria.libros|length if categoria.libros else 0 }} libro(s)
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="mt-3">
+                    <a href="{{ url_for('categoria_editar', categoria_id=categoria.CategoriaID) }}"
+                       class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Editar Categoría
+                    </a>
+                    <form action="{{ url_for('categoria_eliminar', categoria_id=categoria.CategoriaID) }}"
+                          method="post" style="display: inline;"
+                          onsubmit="return confirm('¿Está seguro de eliminar esta categoría?');">
+                        <button type="submit" class="btn btn-danger"
+                                {% if categoria.libros and categoria.libros|length > 0 %}disabled{% endif %}>
+                            <i class="bi bi-trash"></i> Eliminar Categoría
+                        </button>
+                    </form>
+                </div>
+
+                {% if categoria.libros and categoria.libros|length > 0 %}
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Esta categoría no puede ser eliminada porque tiene libros asociados.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5><i class="bi bi-book"></i> Libros en esta Categoría</h5>
+            </div>
+            <div class="card-body">
+                {% if categoria.libros and categoria.libros|length > 0 %}
+                    <p class="text-muted">{{ categoria.libros|length }} libro(s) en total</p>
+                    <ul class="list-group">
+                        {% for libro in categoria.libros %}
+                        <li class="list-group-item">
+                            <a href="{{ url_for('libro_detalle', libro_id=libro.LibroID) }}">
+                                <strong>{{ libro.Titulo }}</strong>
+                            </a>
+                            <br>
+                            <small class="text-muted">
+                                Autor: {{ libro.autor.nombre_completo if libro.autor else 'Desconocido' }}<br>
+                                Disponibles:
+                                <span class="badge bg-{{ 'success' if libro.CopiasDisponibles > 0 else 'danger' }}">
+                                    {{ libro.CopiasDisponibles }}/{{ libro.CopiasTotal }}
+                                </span>
+                            </small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">No hay libros en esta categoría</p>
+                    <a href="{{ url_for('libro_nuevo') }}" class="btn btn-sm btn-success">
+                        <i class="bi bi-plus-circle"></i> Agregar primer libro
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

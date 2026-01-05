@@ -1,0 +1,118 @@
+/* static/css/style.css */
+/* Estilos personalizados para el Sistema de Biblioteca */
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #193770;
+}
+
+.bg-primary { 
+    background-color: #003366 !important; 
+}
+
+.container {
+    flex: 1;
+    background-color: #003366;
+}
+
+/* Navbar */
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    background: #003366;
+}
+.navbar-dark .navbar-nav .nav-link {
+    color: #ffffff;
+    font-weight: 500;
+    background-color: #003366; 
+}
+
+h2 {
+    color: #ea9e32;
+    margin-bottom: 1rem;
+}
+
+/* Jumbotron personalizado */
+.jumbotron {
+    background: linear-gradient(135deg, #667eea 0%, #204d74 100%);
+    color: white;
+}
+
+/* Cards */
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    height: 100%;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+/* Tablas */
+.table-hover tbody tr:hover {
+    background-color: rgba(0,123,255,0.1);
+}
+
+/* Badges */
+.badge {
+    font-size: 0.9em;
+    padding: 0.5em 0.7em;
+}
+
+/* Footer */
+footer {
+    margin-top: auto;
+    background-color: #f8f9fa;
+}
+
+/* Formularios */
+.form-label {
+    font-weight: 600;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Alertas */
+.alert {
+    border-radius: 0.5rem;
+}
+
+/* Botones */
+.btn {
+    border-radius: 0.3rem;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5568d3 0%, #63408b 100%);
+}
+
+/* Iconos grandes en cards */
+.card i.fs-1 {
+    font-size: 3rem;
+}
+
+/* Display para números grandes */
+.display-6 {
+    font-size: 2.5rem;
+    font-weight: 300;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1rem;
+    }
+}

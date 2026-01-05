@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if libro else 'Nuevo' }} Libro - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>
+            <i class="bi bi-{{ 'pencil' if libro else 'plus-circle' }}"></i>
+            {{ 'Editar' if libro else 'Nuevo' }} Libro
+        </h2>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('libros_lista') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('libro_editar', libro_id=libro.LibroID) if libro else url_for('libro_nuevo') }}">
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="titulo" name="titulo"
+                               value="{{ libro.Titulo if libro else '' }}" required maxlength="200">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="autor_id" class="form-label">Autor <span class="text-danger">*</span></label>
+                            <select class="form-select" id="autor_id" name="autor_id" required>
+                                <option value="">Seleccione un autor...</option>
+                                {% for autor in autores %}
+                                <option value="{{ autor.AutorID }}"
+                                    {{ 'selected' if libro and libro.AutorID == autor.AutorID else '' }}>
+                                    {{ autor.nombre_completo }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="categoria_id" class="form-label">Categoría <span class="text-danger">*</span></label>
+                            <select class="form-select" id="categoria_id" name="categoria_id" required>
+                                <option value="">Seleccione una categoría...</option>
+                                {% for categoria in categorias %}
+                                <option value="{{ categoria.CategoriaID }}"
+                                    {{ 'selected' if libro and libro.CategoriaID == categoria.CategoriaID else '' }}>
+                                    {{ categoria.NombreCategoria }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="isbn" class="form-label">ISBN <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="isbn" name="isbn"
+                                   value="{{ libro.ISBN if libro else '' }}" required maxlength="20"
+                                   pattern="[0-9\-X]+" title="Solo números, guiones y X">
+                            <div class="form-text">Formato: 978-3-16-148410-0</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="editorial" class="form-label">Editorial</label>
+                            <input type="text" class="form-control" id="editorial" name="editorial"
+                                   value="{{ libro.Editorial if libro else '' }}" maxlength="100">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label for="ano_publicacion" class="form-label">Año de Publicación</label>
+                            <input type="number" class="form-control" id="ano_publicacion" name="ano_publicacion"
+                                   value="{{ libro.AnoPublicacion if libro else '' }}"
+                                   min="1000" max="{{ current_year }}" placeholder="YYYY">
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="copias_total" class="form-label">Copias Totales <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="copias_total" name="copias_total"
+                                   value="{{ libro.CopiasTotal if libro else '1' }}"
+                                   min="1" max="999" required>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label for="copias_disponibles" class="form-label">Copias Disponibles <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="copias_disponibles" name="copias_disponibles"
+                                   value="{{ libro.CopiasDisponibles if libro else '1' }}"
+                                   min="0" max="999" required>
+                        </div>
+                    </div>
+
+                    {% if libro %}
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Atención:</strong> Si reduce las copias disponibles, asegúrese de que no haya más préstamos activos que copias disponibles.
+                    </div>
+                    {% endif %}
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('libros_lista') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-{{ 'warning' if libro else 'success' }}">
+                            <i class="bi bi-{{ 'pencil' if libro else 'check-circle' }}"></i>
+                            {{ 'Actualizar' if libro else 'Crear' }} Libro
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-lightbulb"></i> Consejos</h5>
+                <ul class="small">
+                    <li><strong>Título:</strong> Use el título completo del libro</li>
+                    <li><strong>ISBN:</strong> Identificador único internacional del libro</li>
+                    <li><strong>Copias:</strong> Las disponibles no pueden exceder el total</li>
+                    <li><strong>Editorial:</strong> Nombre de la casa editorial</li>
+                    <li><strong>Año:</strong> Año de la primera publicación</li>
+                </ul>
+            </div>
+        </div>
+
+        {% if libro %}
+        <div class="card mt-3 bg-info text-white">
+            <div class="card-body">
+                <h6 class="card-title"><i class="bi bi-info-circle"></i> Información Actual</h6>
+                <ul class="small mb-0">
+                    <li>ID: {{ libro.LibroID }}</li>
+                    <li>Creado: {{ libro.FechaRegistro|format_date if libro.FechaRegistro else 'No disponible' }}</li>
+                    <li>Préstamos activos: {{ libro.CopiasTotal - libro.CopiasDisponibles }}</li>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

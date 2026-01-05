@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}{{ autor.nombre_completo }} - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="row mb-3">
+    <div class="col-md-12">
+        <a href="{{ url_for('autores_lista') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver a la lista
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5><i class="bi bi-person-lines-fill"></i> Información del Autor</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <tr>
+                        <th style="width: 30%">ID:</th>
+                        <td>{{ autor.AutorID }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nombre Completo:</th>
+                        <td><strong>{{ autor.nombre_completo }}</strong></td>
+                    </tr>
+                    <tr>
+                        <th>Nombre:</th>
+                        <td>{{ autor.Nombre }}</td>
+                    </tr>
+                    <tr>
+                        <th>Apellido:</th>
+                        <td>{{ autor.Apellido }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nacionalidad:</th>
+                        <td>{{ autor.Nacionalidad or 'No especificada' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Nacimiento:</th>
+                        <td>
+                            {% if autor.FechaNacimiento %}
+                                {{ autor.FechaNacimiento|format_date }}
+                            {% else %}
+                                No especificada
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Biografía:</th>
+                        <td>{{ autor.Biografia or 'Sin biografía' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Total de Libros:</th>
+                        <td>
+                            <span class="badge bg-primary">
+                                {{ autor.libros|length if autor.libros else 0 }} libro(s)
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Fecha de Registro:</th>
+                        <td>{{ autor.FechaRegistro|format_datetime if autor.FechaRegistro else 'N/A' }}</td>
+                    </tr>
+                </table>
+
+                <div class="mt-3">
+                    <a href="{{ url_for('autor_editar', autor_id=autor.AutorID) }}"
+                       class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Editar Autor
+                    </a>
+                    <form action="{{ url_for('autor_eliminar', autor_id=autor.AutorID) }}"
+                          method="post" style="display: inline;"
+                          onsubmit="return confirm('¿Está seguro de eliminar este autor?');">
+                        <button type="submit" class="btn btn-danger"
+                                {% if autor.libros and autor.libros|length > 0 %}disabled{% endif %}>
+                            <i class="bi bi-trash"></i> Eliminar Autor
+                        </button>
+                    </form>
+                </div>
+
+                {% if autor.libros and autor.libros|length > 0 %}
+                <div class="alert alert-warning mt-3">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Este autor no puede ser eliminado porque tiene libros asociados.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5><i class="bi bi-book"></i> Obras del Autor</h5>
+            </div>
+            <div class="card-body">
+                {% if autor.libros and autor.libros|length > 0 %}
+                    <p class="text-muted">{{ autor.libros|length }} libro(s) en total</p>
+                    <ul class="list-group">
+                        {% for libro in autor.libros %}
+                        <li class="list-group-item">
+                            <a href="{{ url_for('libro_detalle', libro_id=libro.LibroID) }}">
+                                <strong>{{ libro.Titulo }}</strong>
+                            </a>
+                            <br>
+                            <small class="text-muted">
+                                ISBN: {{ libro.ISBN }}<br>
+                                Categoría: {{ libro.categoria.NombreCategoria if libro.categoria else 'N/A' }}<br>
+                                Disponibles:
+                                <span class="badge bg-{{ 'success' if libro.CopiasDisponibles > 0 else 'danger' }}">
+                                    {{ libro.CopiasDisponibles }}/{{ libro.CopiasTotal }}
+                                </span>
+                            </small>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">Este autor aún no tiene libros registrados en el sistema</p>
+                    <a href="{{ url_for('libro_nuevo') }}" class="btn btn-sm btn-success">
+                        <i class="bi bi-plus-circle"></i> Agregar primer libro
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

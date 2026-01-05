@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}{{ titulo }} - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h2><i class="bi bi-journal-check"></i> {{ titulo }}</h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="{{ url_for('prestamo_nuevo') }}" class="btn btn-success">
+            <i class="bi bi-journal-plus"></i> Nuevo Préstamo
+        </a>
+        {% if titulo == 'Préstamos Activos' %}
+        <a href="{{ url_for('prestamos_vencidos') }}" class="btn btn-danger">
+            <i class="bi bi-exclamation-triangle"></i> Ver Vencidos
+        </a>
+        {% else %}
+        <a href="{{ url_for('prestamos_lista') }}" class="btn btn-info">
+            <i class="bi bi-journal-check"></i> Ver Activos
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+{% if prestamos %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Usuario</th>
+                <th>Libro</th>
+                <th>Fecha Préstamo</th>
+                <th>Fecha Devolución</th>
+                <th>Días</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prestamo in prestamos %}
+            <tr class="{{ 'table-danger' if prestamo.esta_vencido else '' }}">
+                <td>{{ prestamo.PrestamoID }}</td>
+                <td>
+                    <a href="{{ url_for('usuario_detalle', usuario_id=prestamo.UsuarioID) }}">
+                        {{ prestamo.usuario.nombre_completo }}
+                    </a>
+                    <br>
+                    <small class="text-muted">{{ prestamo.usuario.NumeroCarnet }}</small>
+                </td>
+                <td>
+                    <a href="{{ url_for('libro_detalle', libro_id=prestamo.LibroID) }}">
+                        {{ prestamo.libro.Titulo }}
+                    </a>
+                </td>
+                <td>{{ prestamo.FechaPrestamo|format_date }}</td>
+                <td>{{ prestamo.FechaDevolucionEsperada|format_date }}</td>
+                <td>
+                    {% if prestamo.dias_restantes < 0 %}
+                        <span class="badge bg-danger">
+                            Vencido hace {{ prestamo.dias_restantes|abs }} días
+                        </span>
+                    {% elif prestamo.dias_restantes == 0 %}
+                        <span class="badge bg-warning">Vence HOY</span>
+                    {% elif prestamo.dias_restantes <= 3 %}
+                        <span class="badge bg-warning">{{ prestamo.dias_restantes }} días</span>
+                    {% else %}
+                        <span class="badge bg-success">{{ prestamo.dias_restantes }} días</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge bg-{{ 'info' if prestamo.Estado == 'Prestado' else 'secondary' }}">
+                        {{ prestamo.Estado }}
+                    </span>
+                </td>
+                <td>
+                    {% if prestamo.esta_activo %}
+                    <form method="POST" action="{{ url_for('prestamo_devolver', prestamo_id=prestamo.PrestamoID) }}"
+                          style="display: inline;">
+                        <button type="submit" class="btn btn-sm btn-success"
+                                onclick="return confirm('¿Confirma la devolución del libro?')">
+                            <i class="bi bi-check-circle"></i> Devolver
+                        </button>
+                    </form>
+                    {% else %}
+                    <span class="text-muted">-</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="text-muted">Total: {{ prestamos|length }} préstamo(s)</p>
+{% else %}
+<div class="alert alert-info">
+    No se encontraron {{ 'préstamos vencidos' if titulo == 'Préstamos Vencidos' else 'préstamos activos' }}.
+</div>
+{% endif %}
+{% endblock %}

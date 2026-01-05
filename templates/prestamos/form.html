@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Préstamo - Sistema de Biblioteca{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2><i class="bi bi-journal-plus"></i> Nuevo Préstamo</h2>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{{ url_for('prestamos_lista') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('prestamo_nuevo') }}">
+                    <div class="mb-3">
+                        <label for="libro_id" class="form-label">Libro <span class="text-danger">*</span></label>
+                        <select class="form-select" id="libro_id" name="libro_id" required>
+                            <option value="">Seleccione un libro...</option>
+                            {% for libro in libros_disponibles %}
+                            <option value="{{ libro.LibroID }}">
+                                {{ libro.Titulo }} - {{ libro.autor.nombre_completo }}
+                                (Disponibles: {{ libro.CopiasDisponibles }})
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Solo se muestran libros con copias disponibles</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="usuario_id" class="form-label">Usuario <span class="text-danger">*</span></label>
+                        <select class="form-select" id="usuario_id" name="usuario_id" required>
+                            <option value="">Seleccione un usuario...</option>
+                            {% for usuario in usuarios_activos %}
+                            <option value="{{ usuario.UsuarioID }}">
+                                {{ usuario.nombre_completo }} - {{ usuario.NumeroCarnet }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">Solo se muestran usuarios activos sin préstamos vencidos</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="dias_prestamo" class="form-label">Días de Préstamo</label>
+                        <input type="number" class="form-control" id="dias_prestamo" name="dias_prestamo"
+                               value="14" min="1" max="90">
+                        <div class="form-text">Por defecto: 14 días</div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Información:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>El préstamo se registrará con la fecha actual</li>
+                            <li>La fecha de devolución esperada se calculará automáticamente</li>
+                            <li>La multa por retraso es de $10.00 por día</li>
+                            <li>No se pueden crear préstamos si el usuario tiene préstamos vencidos</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('prestamos_lista') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle"></i> Crear Préstamo
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-lightbulb"></i> Consejos</h5>
+                <ul class="small">
+                    <li>Verifica que el libro tenga copias disponibles</li>
+                    <li>Confirma que el usuario no tenga préstamos vencidos</li>
+                    <li>Los préstamos estándar son de 14 días</li>
+                    <li>Puedes ajustar los días según necesidad (1-90 días)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
