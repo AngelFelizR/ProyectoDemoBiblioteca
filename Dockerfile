@@ -30,6 +30,7 @@ RUN echo 'root:sbs' | chpasswd
 
 # Expose SSH port
 EXPOSE 22
+EXPOSE 5001
 
 # Start SSH server
 CMD ["/usr/sbin/sshd", "-D"]
