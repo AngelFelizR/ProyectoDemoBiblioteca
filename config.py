@@ -11,7 +11,7 @@ class Config:
     # - 'localhost' para instancia por defecto
     # - 'localhost\\SQLEXPRESS' para SQL Server Express
     # - '.' para instancia local por defecto
-    SERVER = 'mssql2025'  # Configurado para el servidor especificado
+    SERVER = 'mssql'  # Configurado para el servidor especificado
     PORT = 1433  # Puerto por defecto para SQL Server
 
     DATABASE = 'BibliotecaDB'
@@ -72,15 +72,6 @@ class Config:
         return url
 
     @staticmethod
-    def verificar_drivers_disponibles():
-        """
-        Verifica y muestra los drivers disponibles.
-        Nota: Esta función estaba orientada a ODBC; para pymssql no es necesaria.
-        """
-        print("\nDrivers no aplicables para pymssql, ya que no usa ODBC.")
-        return []
-
-    @staticmethod
     def test_connection(use_windows_auth=True):
         """
         Prueba la conexión a SQL Server usando pymssql
@@ -137,7 +128,7 @@ class ProductionConfig(Config):
     TESTING = False
 
     # En producción, usar variables de entorno
-    SERVER = os.environ.get('DB_SERVER', 'mssql2025')
+    SERVER = os.environ.get('DB_SERVER', 'mssql')
     PORT = int(os.environ.get('DB_PORT', '1433'))
     DATABASE = os.environ.get('DB_NAME', 'BibliotecaDB')
     USERNAME = os.environ.get('DB_USER', 'sa')
@@ -166,9 +157,6 @@ if __name__ == "__main__":
     # Imprimir la URL de SQLAlchemy al iniciar
     print("\nURL de SQLAlchemy:")
     print(Config.get_sqlalchemy_url(use_windows_auth=False))
-
-    # Verificar drivers disponibles (adaptado)
-    Config.verificar_drivers_disponibles()
 
     # Probar conexión con SQL Auth (ya que Windows Auth no está implementada)
     print("\n" + "=" * 80)

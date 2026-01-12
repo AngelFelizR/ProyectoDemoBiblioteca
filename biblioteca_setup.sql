@@ -3,16 +3,6 @@
 -- Sistema de Gestión de Biblioteca
 -- =============================================
 
-USE [master]
-GO
-
--- Crear la base de datos si no existe
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'BibliotecaDB')
-BEGIN
-    CREATE DATABASE [BibliotecaDB]
-END
-GO
-
 USE [BibliotecaDB]
 GO
 
